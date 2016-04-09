@@ -46,6 +46,57 @@ describe('basic likes and dislikes', function(){
   });
 });
 
+describe('basic unlike/undislike/unrate', function(){
+  beforeEach(function(done){
+    client.flushdb();
+    raccoon.liked('chris', 'batman', function(){
+      raccoon.disliked('greg', 'batman', function(){
+        done();
+      });
+    });
+  });
+  describe('basic unlike', function(){
+    it('should valdiate that like is removed after unlike', function(done){
+      raccoon.unLiked('chris', 'batman', function() {
+        client.smembers('movie:user:chris:liked', function(err, results){
+          assert.equal(results.length,0);
+          done();
+        });
+      });
+    });
+  });
+  describe('basic undislike', function(){
+    it('should valdiate that dislike is removed after undislike', function(done){
+      raccoon.unDisliked('greg', 'batman', function() {
+        client.smembers('movie:user:greg:disliked', function(err, results){
+          assert.equal(results.length,0);
+          done();
+        });
+      });
+    });
+  });
+  describe('basic unrate (like)', function(){
+    it('should valdiate that like is removed after unrating', function(done){
+      raccoon.unRated('chris', 'batman', function() {
+        client.smembers('movie:user:chris:liked', function(err, results){
+          assert.equal(results.length,0);
+          done();
+        });
+      });
+    });
+  });
+  describe('basic unrate (dislike)', function(){
+    it('should valdiate that dislike is removed after unrating', function(done){
+      raccoon.unRated('greg', 'batman', function() {
+        client.smembers('movie:user:greg:disliked', function(err, results){
+          assert.equal(results.length,0);
+          done();
+        });
+      });
+    });
+  });
+});
+
 describe('callbacks', function(){
   it('should fire the input callback after a like is added', function(done){
     raccoon.liked('hao', 'superman', function(){
